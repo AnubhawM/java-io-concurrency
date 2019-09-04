@@ -14,12 +14,18 @@ public class QuoteRequest {
     @XmlElementWrapper
     @XmlElement(name = "symbol")
     private Set<String> symbols;
+    
+
+    private static int interval;    
+
 
     public QuoteRequest() {}
 
-    public QuoteRequest(Set<QuoteField> fields, Set<String> symbols) {
+    public QuoteRequest(Set<QuoteField> fields, Set<String> symbols, int interval) {
         this.symbols = symbols;
         this.fields = fields;
+        this.setInterval(interval);
+
     }
 
     public Set<String> getSymbols() {
@@ -37,5 +43,16 @@ public class QuoteRequest {
     public void setFields(Set<QuoteField> fields) {
         this.fields = fields;
     }
+    //getter and setter for interval
+
+	public static int getInterval() {
+		return interval;
+	}
+
+	public void setInterval(int interval) {
+		this.interval = interval;
+	}
+    
+    
 }
 

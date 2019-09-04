@@ -17,38 +17,23 @@ import java.util.Set;
 public class TickerServer {
 
     public static void main(String[] args) {
+    	
+    	int count = 0;
+
 
         try (
                 ServerSocket server = new ServerSocket(3000);
-                Socket client = server.accept();
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()))
         ) {
-            JAXBContext context = JAXBContext.newInstance(QuoteField.class, QuoteRequest.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
+        	while (true) {
+        		new Thread(new ClientHandler(server.accept())).start();
+				System.out.println(count);
+				count++;
+        	}
 
-            // Create buffered reader and string reader to read a request from a client socket inputstream
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            StringReader stringReader = new StringReader(bufferedReader.readLine());
-
-            // Unmarshall stringReader to QuoteRequest object
-            QuoteRequest quoteRequest = (QuoteRequest) unmarshaller.unmarshal(stringReader);
-
-            // Fetch quotes for each
-            Set<Quote> quotes = StockApi.fetchQuotes(quoteRequest);
-
-            // Map quote results to a formatted string
-            String stringQuote = StockUtils.quotesToString(quotes, quoteRequest.getFields());
-
-            // Write and flush formatted string to client socket
-            out.write(stringQuote);
-            out.flush();
-
-        } catch (IOException | JAXBException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-    }
+	}
 
 
 }
